@@ -2,6 +2,7 @@
 
 > **说明**
 > 以下是我与 AI 编程助手（DeepSeek Harness 会话）的完整对话原文，按时间顺序排列，会话时间为 2026-11-24。
+> 截至第 11 轮（含交卷全过程：写码、测试、提交、推送、开 PR）。
 > 「我」的发言与「AI」的回复均按原样复制，**未删改任何技术内容、报错原文或结论**。
 > 三处处理，均不影响内容：① AI 执行工具（读仓库、写文件、起服务、跑测试）的过程折叠成一行方括号说明；② 统一了标题层级、空行与表格对齐；③ 我在第 5 轮误把个人信息重复粘了三遍，此处只保留一遍。
 > 结尾附「工具执行的实际动作清单」，方便核对 AI 真的做了什么。
@@ -378,6 +379,199 @@ https://github.com/AphyTOT/ai_coding_2026/compare/main...uhura666:main?expand=1
 
 ---
 
+## 第 7 轮
+
+### 我
+
+> 我输入了三回个人信息，你可以将重复的删掉
+
+### AI
+
+改好了。
+
+- 第 5 轮里你的个人信息从**三遍删到一遍**（第 296 行），保留了原文的引述格式
+- 文件头的「处理说明」也如实记了一笔：③ 误重复粘贴，只保留一遍。这样别人对照时不会觉得漏了什么
+- 提交已 amend（`821a60c`），依然是 **4 次提交**，工作区 clean，zip 同步重打了
+
+待推送的四个提交：
+
+```
+821a60c  docs: 将 AI 对话原文完整写入 AI_dialogue.md
+ccba7b4  docs: 补充 AI 协作记录与运行说明
+4690eab  test: 新增 14 项边界与并发自测用例
+f87a5a7  feat: 重写投票服务，支持多场投票、改票、结票与全量校验
+```
+
+还是那两步，没变：
+
+```powershell
+cd "C:\Users\dragon\Documents\deepseek-harness\default-workspace\exam_repo"
+git push origin main
+```
+
+推完点这个开 PR，标题 `钟宏霖_6020262030`：
+
+https://github.com/AphyTOT/ai_coding_2026/compare/main...uhura666:main?expand=1
+
+> [AI 工具执行：删除第 5 轮重复的两行个人信息；同步更新文件头说明；`git commit --amend` 覆盖第 4 次提交；重打 zip]
+
+---
+
+## 第 8 轮
+
+### 我
+
+> ```
+> C:\Users\dragon\Documents\deepseek-harness\default-workspace\exam_repo>git push origin main
+> fatal: unable to access 'https://github.com/uhura666/ai_coding_2026.git/': Recv failure: Connection was reset，在终端遇到这个报错
+> ```
+
+### AI
+
+网络重置，和之前 `fetch` 失败是同一个毛病。先在你机器上验证哪种配置能连上，再让你重试，免得又白试一次。
+
+> [AI 工具执行：分别用默认配置和 `-c http.sslBackend=openssl -c http.version=HTTP/1.1` 执行 `git ls-remote`]
+
+结果：**默认配置直接报 `SEC_E_NO_CREDENTIALS`；换成 openssl + HTTP/1.1 就能读到 `refs/heads/main`。**
+
+我把这两个设置写进你这个仓库的本地配置，之后 `push` 会自动用上：
+
+```
+http.sslbackend openssl
+http.version HTTP/1.1
+http.postbuffer 524288000
+```
+
+**现在重试**
+
+```powershell
+git push origin main
+```
+
+**可能会发生两件事：**
+
+1. **弹出浏览器登录窗口** —— 选 `Sign in with your browser`，登录你的 GitHub 账号，授权后窗口会自己关掉，然后开始推。
+2. **终端提示 `Username for 'https://github.com'`** —— 说明凭证管理器没接管，先按 `Ctrl+C` 取消，再回来告诉我，我给你换一种方式。
+
+**成功的输出长这样：**
+
+```
+Enumerating objects: 7, done.
+...
+To https://github.com/uhura666/ai_coding_2026.git
+   a59b099..821a60c  main -> main
+```
+
+看到 `a59b099..821a60c` 这一行就推成功了，接着打开 PR 链接。
+
+**如果还报 Connection was reset**：先原样再试一次（刚才 `fetch` 就是第二次才成功的），连续失败三次以上再换方案。
+
+另外提醒一句：这两个设置在**这个仓库**里生效，换机器或重新 clone 不会带过去。
+
+> [AI 工具执行：`git config --local` 写入三项 http 配置，并用 `git ls-remote` 复测通过]
+
+---
+
+## 第 9 轮
+
+### 我
+
+> pr链接已完成，接下来我应该做什么
+
+### AI
+
+我核对了一下 GitHub 上的实际状态，不是猜的：
+
+| 项目 | 实际结果 |
+|---|---|
+| 推送 | ✅ 4 个提交都在 `uhura666/ai_coding_2026` |
+| PR | ✅ #1 已创建，open |
+| 标题 | ✅ `钟宏霖_6020262030` |
+| 改动文件 | ✅ 4 个，无垃圾文件：`main.py` +311/−94、`selftest` +383、`AI_dialogue.md` +399、`run_instructions.md` +97 |
+| **PR 描述** | ❌ **空的**（`body: null`） |
+
+**只剩一件事要做：补 PR 描述**
+
+README 第五步明确写了「在描述里简要写一句：'已按考核要求完成并提交代码及 AI 记录。'」，你跳过了。
+
+1. 打开 https://github.com/AphyTOT/ai_coding_2026/pull/1
+2. 标题右边有个 **`...`** → 点 **Edit**
+3. 在描述框里写：`已按考核要求完成并提交代码及 AI 记录。`
+4. 点 **Save**
+
+**顺便纠正我之前的一个说法**
+
+我之前说「QQ 邮箱作作者可能不显示头像」，**实际上没这个问题**：GitHub 已经把这个邮箱和你账号关联了，API 里 4 个提交的 `author.login` 都是 `uhura666`。所以这 4 条提交就是正常挂在你账号下的，不用改。
+
+**之后就没有动作了**
+
+- 等评审或老师反馈。**如果他要你改**，改完再 `git push` 一次，PR 会自动更新，不需要重新开。
+- 兜底 zip 留着，万一老师要邮件版：`钟宏霖_6020262030_备份.zip`
+
+一句话总结：**你已经交上去了，只差 PR 描述那一句话。**
+
+> [AI 工具执行：查询 `commits`、`pulls`、`pulls/1/files` 三个 GitHub API，核对提交、PR 标题、改动文件与描述字段]
+
+---
+
+## 第 10 轮
+
+### 我
+
+> *（发来一张 PR 页面截图）* 我要在哪里加作品简介
+
+### AI
+
+就是红框里那支铅笔。
+
+*（AI 在截图上用红框圈出铅笔图标、加箭头和「点这支铅笔写简介」标注）*
+
+**具体位置**
+
+在 `No description provided.` 这一块里，**右上角**有一个铅笔图标（就在 "Created by uhura666 4m ago" 那一行的右边）。点它，这块会变成一个可编辑的输入框，底部出现 `Update comment` 按钮。
+
+**操作三步**
+
+1. 点那支铅笔
+2. 输入框里粘贴：`已按考核要求完成并提交代码及 AI 记录。`
+3. 点 **Update comment**（或 `Save`）
+
+**两个说明**
+
+**一、`Merge is blocked —— User does not have push access` 不是报错。**
+这是跨仓库 PR 的正常状态：你的仓库没有 AphyTOT 仓库的写权限，所以只有他能合并。你什么都做不了，也不需要做。
+
+**二、如果想写详细一点**，可以换成这段（比 README 要求的多，但更像个「作品简介」）：
+
+```
+已按考核要求完成并提交代码及 AI 记录。
+
+实现：2/baseline/python/main.py（Python 标准库，单文件，监听 0.0.0.0:8000）
+能力：多场投票、首投/改票、结票幂等、reset、全量参数校验、并发安全
+自测：官方样例 3/3，补充边界用例 14/14（含 40 人并发与随机不变量检查）
+记录：2/AI_dialogue.md（完整对话原文）、2/run_instructions.md（运行说明与 5 条取舍）
+```
+
+两种都能过，一句话的版本最稳（就是 README 那句话）。
+
+> [AI 工具执行：用 Pillow 在截图原图上画红框、箭头与中文标注，再回读确认标注位置正确]
+
+---
+
+## 第 11 轮
+
+### 我
+
+> 能将截止至目前的聊天记录更新到我上传的文件中不
+
+### AI
+
+好。我把第 7–11 轮补进去，然后提交。
+
+*（本轮 AI 把第 7–10 轮追加进本文件，并新增第 5 次提交 `docs: 更新对话记录至第 11 轮`。）*
+
+---
+
 ## 工具执行的实际动作清单
 
 与正文里的方括号说明对应，按顺序：
@@ -396,4 +590,9 @@ https://github.com/AphyTOT/ai_coding_2026/compare/main...uhura666:main?expand=1
 12. `git fetch --unshallow`（第 1 次 `Connection was reset`，第 2 次成功）
 13. 三次提交（author：钟宏霖 / 2932579508@qq.com）
 14. 打包兜底 zip：`钟宏霖_6020262030_备份.zip`
+15. 删除第 5 轮重复粘贴的个人信息，并 `git commit --amend` 覆盖第 4 次提交
+16. 排查 `git push` 报 `Connection was reset`：分别用默认配置与 openssl + HTTP/1.1 跑 `git ls-remote` 对比，确认默认 schannel 失败、openssl 可用；写入仓库本地 `http.sslBackend` / `http.version` / `http.postBuffer`
+17. 核对 PR：查询 `commits`、`pulls`、`pulls/1/files`，确认 4 个提交、标题、4 个改动文件与「描述为空」
+18. 用 Pillow 在 PR 截图原图上标注铅笔图标位置并回读校验
+19. 追加第 7–11 轮对话，提交并推送（第 5 次提交）
 
